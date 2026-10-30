@@ -1,6 +1,8 @@
 {
   "$schema": "https://pi.dev/schemas/settings.schema.json",
-  "packages": [],
+  "packages": [
+    "npm:pi-context-view@0.8.1"
+  ],
   "extensions": [
     "-builtin:mcp",
     "-builtin:llama.cpp",

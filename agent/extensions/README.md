@@ -7,6 +7,9 @@ Empty on purpose: the first experiment is "built-in tools only". Add an
 extension here only when a measured failure justifies the extra prompt tokens —
 a tool definition costs context on every request.
 
+The `/context` view is not in this directory: it comes from the pinned
+`npm:pi-context-view` package in `agent/settings.json`.
+
 Rules of thumb:
 
 - One tool per file, narrow argument schema, short description.

@@ -2,7 +2,7 @@
 
 A deliberately small [pi](https://pi.dev) profile for testing how small local
 models cope with a minimal harness: short system prompt, three tool definitions,
-no packages, no skills.
+no packages that add tools or prompt text, no skills.
 
 Use it as a template — clone it, point it at whatever OpenAI-compatible server
 you run, and change one knob at a time.
@@ -14,7 +14,7 @@ git clone <this-repo> pi-for-local && cd pi-for-local
 ./run.sh                 # TUI; first run seeds agent/models.json from the example
 ```
 
-Requires `pi` on your `PATH` (tested with 1.4.0). Override with
+Requires `pi` installed and on your `PATH` (tested with 1.4.0). Override with
 `PI_BIN=/path/to/pi ./run.sh`.
 
 Before the first useful run, point the profile at a server — either edit
@@ -59,7 +59,7 @@ dir — which is what `run.sh` sets via `PI_CODING_AGENT_DIR`.
 pi-for-local/
 ├── run.sh                    launcher: PI_CODING_AGENT_DIR + pinned-ish pi binary
 └── agent/                    <- PI_CODING_AGENT_DIR
-    ├── settings.json         packages: [], 3 builtin extensions off, 3 tools
+    ├── settings.json         pi-context-view pinned, 3 builtin extensions off, 3 tools
     ├── SYSTEM.md             replaces pi's default system prompt
     ├── models.example.json   template for your OpenAI-compatible endpoint
     ├── extensions/           custom harness extensions (empty by default)
@@ -80,17 +80,17 @@ Not in the repo, created locally by you or by pi: `agent/models.json`,
 | `PI_LOCAL_SKILLS=1` | env | Re-enable skill discovery (`agent/skills/` + `~/.agents/skills/`, +~600 tok) |
 | `PI_LOCAL_CONTEXT=0` | env | Drop AGENTS.md/CLAUDE.md context files (on by default, -~430 tok) |
 | `PI_LOCAL_PROJECT=1` | env | Trust project `.pi/` settings |
+| `packages` | `agent/settings.json` | Inspect the harness with `/context` at zero request-token cost |
 | `extensions/` | `agent/` | Does a custom tool beat describing the same thing in prose? |
 | `PI_BIN` | env | A/B a different pi version against the same harness |
 
 Measure before changing: `/context` and the footer token count show what the
-harness itself costs. `/context` comes from the `pi-context-view` package, which
-is deliberately not installed here; add it back for a measurement session:
-
-```bash
-# agent/settings.json
-"packages": ["npm:pi-context-view"]
-```
+harness itself costs. `/context` comes from `pi-context-view`, which ships pinned
+in `agent/settings.json` (`npm:pi-context-view@0.8.1`). It registers only a
+command and a TUI view — no tools and no prompt text — so it adds nothing to the
+request bodies measured below. Pi installs it from npm on the first online
+launch; offline runs skip it silently. `PI_LOCAL_BARE=1` or `--no-extensions`
+hides it if you want the package-free UI.
 
 Ground truth for this profile, measured by pointing `models.json` at a capture
 server and reading the request body:
@@ -114,5 +114,11 @@ that has nothing to do with the current project. `PI_LOCAL_BARE=1` drops both.
   (`+codemode`, an MCP server, an extension), update the prose too — otherwise
   the model is told a tool exists that does not, or vice versa. That mismatch is
   usually what makes a small model flail.
-- Nothing here is pinned by version except the settings schema; `run.sh` uses
-  whatever `pi` it finds first, so record the version when you publish numbers.
+- Nothing here is pinned by version except the settings schema and
+  `pi-context-view` (pinned so `/context` stays comparable across clones);
+  `run.sh` uses whatever `pi` it finds first, so record the version when you
+  publish numbers.
+- The extension installs into `agent/npm/`, which is gitignored. To bump it,
+  change the pin in `agent/settings.json`; pi reconciles the install on the next
+  launch. `--offline`/`PI_OFFLINE=1` on a machine without the install simply
+  skips it.
