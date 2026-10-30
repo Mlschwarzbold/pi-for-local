@@ -1,0 +1,23 @@
+{
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
+  "packages": [],
+  "extensions": [
+    "-builtin:mcp",
+    "-builtin:llama.cpp",
+    "-builtin:tool-search"
+  ],
+  "defaultProvider": "local",
+  "defaultModel": "local-model",
+  "defaultThinkingLevel": "high",
+  "defaultTools": [
+    "read",
+    "bash",
+    "edit"
+  ],
+  "hideThinkingBlock": false,
+  "enableSkillCommands": false,
+  "showCacheMissNotices": false,
+  "compaction": {
+    "enabled": true
+  }
+}

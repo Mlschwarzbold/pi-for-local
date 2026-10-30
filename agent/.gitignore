@@ -1,0 +1,13 @@
+# Runtime state written by pi into the agent dir. Never commit.
+auth.json
+sessions/
+npm/
+models-store.json
+*.log
+
+# Per-machine config, not shared: copy models.example.json to models.json and
+# point baseUrl / models[].id at your own server.
+models.json
+
+# Per-machine project-trust list.
+trust.json
